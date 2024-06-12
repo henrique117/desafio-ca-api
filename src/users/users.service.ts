@@ -12,7 +12,10 @@ export class UsersService {
         newUser.id = uuid()
         newUser.password = bcryptHashSync(newUser.password, 10)
         this.usersArray.push(newUser)
-        console.log(this.usersArray)
+    }
+
+    findByEmail(email: string): UsersDto | null {
+        return this.usersArray.find(u => u.email === email)
     }
 
 }
