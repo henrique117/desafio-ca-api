@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseGuards } from '@nestjs/common';
 import { EmblemasDto, ParamsDto } from './emblemas.dto';
 import { EmblemasService } from './emblemas.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('emblemas')
 export class EmblemasController {
 
