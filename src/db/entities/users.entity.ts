@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'users' })
-export class EmblemasEntity {
+export class UsersEntity {
     @PrimaryGeneratedColumn({ name: 'userid' })
     id: number
     @Column({ type: 'varchar' })
