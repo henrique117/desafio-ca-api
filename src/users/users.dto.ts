@@ -19,5 +19,5 @@ export class UsersDto {
 
     @IsUrl()
     @IsOptional()
-    pfp: string | null;
+    pfp?: string;
 }

@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'emblemas' })
 export class EmblemasEntity {
-    @PrimaryGeneratedColumn({ name: 'emblemasid' })
+    @PrimaryGeneratedColumn({ name: 'emblemaid' })
     id: number
     @Column({ type: 'varchar' })
     slug: string
