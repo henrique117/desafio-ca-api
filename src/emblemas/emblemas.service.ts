@@ -1,58 +1,52 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { EmblemasDto, ParamsDto } from './emblemas.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmblemasEntity } from 'src/db/entities/emblemas.entity';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { UsersEntity } from 'src/db/entities/users.entity';
+import EmblemasObject from './emblemasObject';
+import { UserEmblemaEntity } from 'src/db/entities/user-emblemas.entity';
 
 @Injectable()
 export class EmblemasService {
 
     constructor(
         @InjectRepository(EmblemasEntity)
-        private readonly emblemasRepository: Repository<EmblemasEntity>
+        private readonly emblemasRepository: Repository<EmblemasEntity>,
+        @InjectRepository(UsersEntity)
+        private readonly usersRepository: Repository<UsersEntity>,
+        @InjectRepository(UserEmblemaEntity)
+        private readonly userEmblemaRepository: Repository<UserEmblemaEntity>,
     ) {}
 
-    private emblemasArray: EmblemasDto[] = []
+    async create(userId: number) {
 
-    async create(emblemas: EmblemasDto) {
+        const randomEmblema = Math.floor(Math.random() * 10) + 1
+        const emblemaSelected = EmblemasObject.emblemas[randomEmblema]
 
-        if(await this.findById(emblemas.id)) throw new ConflictException('Os emblemas já foram registrados no banco de dados')
+        const user = await this.usersRepository.findOneBy({ userid: userId })
+        let emblema = await this.emblemasRepository.findOne({ where: { emblemaid: emblemaSelected.id } })
 
-        const emblemasSave: EmblemasEntity = {
-            id: emblemas.id,
-            slug: emblemas.slug,
-            name: emblemas.name,
-            image: emblemas.image
+        if(!user) throw new NotFoundException()
+        if(!emblema) {
+            emblema = new EmblemasEntity()
+            emblema.emblemaid = emblemaSelected.id
+            emblema.slug = emblemaSelected.slug
+            emblema.name = emblemaSelected.name
+            emblema.image = emblemaSelected.image
+            emblema.users = []
+            await this.emblemasRepository.save(emblema)
         }
 
-        const createdEmblema = await this.emblemasRepository.save(emblemasSave)
+        const userEmblemaSave = new UserEmblemaEntity()
+        userEmblemaSave.user = user
+        userEmblemaSave.emblema = emblema
 
-        return this.mapEntityToDto(createdEmblema)
+        await this.userEmblemaRepository.save(userEmblemaSave)
+
+        return userEmblemaSave
     }
 
-    async findAll(params: ParamsDto): Promise<EmblemasDto[]> {
-        const searchParams: FindOptionsWhere<EmblemasEntity> = {}
-
-        if(params.slug) searchParams.slug = Like(`%${params.slug}%`)
-        if(params.name) searchParams.name = Like(`%${params.name}%`)
-
-        const emblemasFound = await this.emblemasRepository.find({ where: searchParams })
-
-        return emblemasFound.map(emblemasEntity => this.mapEntityToDto(emblemasEntity))
-    }
-
-    private mapEntityToDto(emblemasEntity: EmblemasEntity): EmblemasDto {
-        return {
-            id: emblemasEntity.id,
-            slug: emblemasEntity.slug,
-            name: emblemasEntity.name,
-            image: emblemasEntity.image
-        }
-    }
-
-    private async findById(id: number): Promise<Boolean> {
-        const foundEmblema = await this.emblemasRepository.findOne({ where: { id } })
-        if(!foundEmblema) return false
-        return true
+    async findEmblemasByUserId(userId: number): Promise<UserEmblemaEntity[]> {
+        return await this.userEmblemaRepository.find({ where: { user: { userid: userId } }, relations: ['emblema']})
     }
 }

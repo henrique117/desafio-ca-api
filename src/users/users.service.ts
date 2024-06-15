@@ -25,9 +25,9 @@ export class UsersService {
         dbUser.email = newUser.email
         dbUser.password = bcryptHashSync(newUser.password, 10)
 
-        const { id, username, email, pfp } = await this.usersRepository.save(dbUser)
+        const { userid, username, email, pfp } = await this.usersRepository.save(dbUser)
 
-        return { id, username, email, pfp }
+        return { userid, username, email, pfp }
     }
 
     async findByEmail(email: string): Promise<UsersDto | null> {
@@ -38,7 +38,7 @@ export class UsersService {
         if(!userFound) return null
 
         return {
-            id: userFound.id,
+            userid: userFound.userid,
             email: userFound.email,
             password: userFound.password,
             username: userFound.username,
@@ -54,7 +54,7 @@ export class UsersService {
         if(!userFound) return null
 
         return {
-            id: userFound.id,
+            userid: userFound.userid,
             email: userFound.email,
             password: userFound.password,
             username: userFound.email,

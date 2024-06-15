@@ -11,7 +11,7 @@ export class AuthService {
     constructor (
         private readonly usersService: UsersService,
         private readonly jwtService: JwtService,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
     ) {
         this.jwtExpirationTime = +this.configService.get<number>('JWT_EXPIRATION_TIME')
     }
@@ -21,7 +21,7 @@ export class AuthService {
 
         if(!foundUser || !bcryptCompareSync(password, foundUser.password)) throw new UnauthorizedException()
 
-        const payload = { sub: foundUser.id, username: foundUser.username }
+        const payload = { sub: foundUser.userid, username: foundUser.username }
         const token = this.jwtService.sign(payload)
 
         return { token, expiresIn: this.jwtExpirationTime }

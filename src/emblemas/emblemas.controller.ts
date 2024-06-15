@@ -1,22 +1,22 @@
-import { Controller, Post, Get, Query, UseGuards } from '@nestjs/common';
-import { EmblemasDto, ParamsDto } from './emblemas.dto';
+import { Controller, Post, Get, UseGuards, Param, ParseIntPipe, Request } from '@nestjs/common';
 import { EmblemasService } from './emblemas.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import EmblemasObject from './emblemasObject';
+import { UserEmblemaEntity } from 'src/db/entities/user-emblemas.entity';
 
-@UseGuards(AuthGuard)
 @Controller('emblemas')
 export class EmblemasController {
 
     constructor(private readonly emblemasService: EmblemasService) {}
 
-    @Post('createAll')
-    async create() {
-        for(let i = 0; i < 10; i++) await this.emblemasService.create(EmblemasObject.emblemas[i])
+    @UseGuards(AuthGuard)
+    @Post('novo')
+    async create(@Request() req: any): Promise<UserEmblemaEntity> {
+        return await this.emblemasService.create(req.user?.userid)
     }
 
-    @Get()
-    async findAll(@Query() params: ParamsDto): Promise<EmblemasDto[]> {
-        return await this.emblemasService.findAll(params)
+    @UseGuards(AuthGuard)
+    @Get('users/:userid')
+    async findEmblemasByUserId(@Param('userid', ParseIntPipe) userId: number): Promise<UserEmblemaEntity[]> {
+        return await this.emblemasService.findEmblemasByUserId(userId)
     }
 }

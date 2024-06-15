@@ -3,7 +3,7 @@ import { IsOptional, MaxLength, MinLength, IsString, IsEmail, IsUrl, IsNumber } 
 export class UsersDto {
     @IsNumber()
     @IsOptional()
-    id: number;
+    userid: number;
 
     @IsString()
     @MinLength(3)
