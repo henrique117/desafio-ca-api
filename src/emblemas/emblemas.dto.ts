@@ -1,5 +1,5 @@
 export class EmblemasDto {
-    id: number;
+    emblemaid: number;
     slug: string;
     name: string;
     image: string;
