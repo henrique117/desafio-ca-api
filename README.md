@@ -1,9 +1,9 @@
 # Desafio Cidade Alta FULLSTACK - API
 
 ## Deve rodar apenas 3 comandos:
-+ #### `npm install` - Instalar as dependências
-+ #### `npm run typeorm migration:run -- -d './src/db/typeOrm.migration-config.ts'` - Rodar as migrations do projeto no seu DB
-+ #### `npm start` - Rodar a aplicação
+* #### `npm install` - Instalar as dependências
+* #### `npm run typeorm migration:run -- -d './src/db/typeOrm.migration-config.ts'` - Rodar as migrations do projeto no seu DB
+* #### `npm start` - Rodar a aplicação
 
 ## .env:
 
