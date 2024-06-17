@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EmblemasEntity } from 'src/db/entities/emblemas.entity';
 import { Repository } from 'typeorm';
 import { UsersEntity } from 'src/db/entities/users.entity';
-import EmblemasObject from './emblemasObject';
 import { UserEmblemaEntity } from 'src/db/entities/user-emblemas.entity';
 import { EmblemasDto } from './emblemas.dto';
 import { CustomRequest } from 'src/auth/custom.interface';
@@ -41,15 +40,11 @@ export class EmblemasService {
             if(e.emblema.emblemaid == emblemaID) userAlreadyHave = true
         })
 
-        console.log(userID, emblemaID, userAlreadyHave)
-
         if(!userID) throw new UnauthorizedException()
         if(userAlreadyHave) throw new HttpException('Você tirou um emblema repetido!', HttpStatus.OK)
 
         const userDB = await this.usersRepository.findOne({ where: { userid: userID } })
         const emblemaDB = await this.emblemasRepository.findOne({ where: { emblemaid: emblemaID } })
-
-        console.log(userDB, emblemaDB)
 
         try {
             const userEmblemaSave = new UserEmblemaEntity()
